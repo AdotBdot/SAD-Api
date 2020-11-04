@@ -24,10 +24,10 @@ namespace SAD
 			{
 				String output;
 				output = Sub.Name + " ";
-				/*foreach( String s in Sub.Forms )
+				foreach( String s in Sub.Forms )
 				{
 					output += s + " ";
-				}*/
+				}
 				output += Sub.Points;
 
 				Console.WriteLine( output );

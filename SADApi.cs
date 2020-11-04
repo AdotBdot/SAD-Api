@@ -211,31 +211,40 @@ namespace SAD
 				catch( NoSuchElementException e )
 				{
 					Console.WriteLine( "Name: " + e.Message );
+					Lgr.log( Logger.LogLevel.DEBUG, "Getting subjects finished" );
 					break;
 				}
 				if( SubjectName.Text == "" )
 					break;
 
 				Sub.Name = SubjectName.Text.Remove( SubjectName.Text.IndexOf( " (zajęcia obowiązkowe)" ), 22 );
-				/*
+
 				//Subject Forms
+				//TODO: po kilka ocen w jednym okienku jest
 				List<String> SubjectForms = new List<String>( );
 				for( int j = 1 ; ; i++ )
 				{
 					IWebElement SubjectForm;
 					try
 					{
-						SubjectForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[2]/td[2]/table[2]/tbody/tr/td" ) );
+						SubjectForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[" + j + "]/tbody/tr/td" ) );
 					}
 					catch( Exception e )
 					{
-						Console.WriteLine( "Forms: " + e.Message );
+						try
+						{
+							SubjectForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[" + j + "]/tbody/tr/td[1]" ) );
+						}
+						catch( Exception e2 )
+						{
+							Console.WriteLine( "Forms: " + e2.Message );
+						}
 						break;
 					}
 					SubjectForms.Add( SubjectForm.Text );
 				}
 				Sub.Forms = SubjectForms;
-				*/
+
 				//Subject Points
 				IWebElement SubjectPoints;
 
