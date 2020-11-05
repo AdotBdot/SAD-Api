@@ -37,7 +37,7 @@ namespace SAD
 		private Logger Lgr;
 		private IWebDriver Driver;
 		private string SAD_URL = "https://zsa-zgora.sad.edu.pl/";
-		private bool isLoggedIn = false;
+		private bool LoggedIn = false;
 		private Page CurrentPage;
 
 		public SADApi( )
@@ -50,8 +50,16 @@ namespace SAD
 			options.AddArgument( "--headless" );
 
 			//init driver
-			Driver = new FirefoxDriver( "C:\\Users\\User\\source\\CSharp\\SAD", options );
-			Driver.Url = SAD_URL;
+			try
+			{
+				Driver = new FirefoxDriver( "./", options );
+				Driver.Url = SAD_URL;
+			}
+			catch( Exception e )
+			{
+				Lgr.log( Logger.LogLevel.ERROR, e.Message );
+				return;
+			}
 
 			CurrentPage = Page.Login;
 		}
@@ -67,10 +75,24 @@ namespace SAD
 		{
 			Driver.Navigate( ).Refresh( );
 		}
+		private bool isLoggedIn( )
+		{
+			if( LoggedIn == false )
+			{
+				Lgr.log( Logger.LogLevel.ERROR, "Haven't logged in yet" );
+				return false;
+			}
+			else
+				return true;
+		}
 		private void goToMainPage( )
 		{
+			if( !isLoggedIn( ) )
+				return;
+
 			if( CurrentPage == Page.Main )
 				return;
+
 			String InitUrl = Driver.Url;
 			IWebElement SADButton = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[2]/td/table/tbody/tr/td[1]/div/a" ) );
 			SADButton.Click( );
@@ -79,6 +101,9 @@ namespace SAD
 		}
 		private void goTo( Page page )
 		{
+			if( !isLoggedIn( ) )
+				return;
+
 			String InitUrl = Driver.Url;
 			if( page == CurrentPage )
 				return;
@@ -181,26 +206,32 @@ namespace SAD
 
 			Lgr.log( Logger.LogLevel.INFO, "Logged In" );
 
-			isLoggedIn = true;
+			LoggedIn = true;
 			CurrentPage = Page.Main;
 		}
 		public void logout( )
 		{
+			if( !isLoggedIn( ) )
+				return;
+
 			IWebElement LogoutButton = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[1]/td[3]/table/tbody/tr/td/table/tbody/tr[2]/td/div/button" ) );
 			LogoutButton.Submit( );
 
 			Lgr.log( Logger.LogLevel.INFO, "Logged Out" );
 
-			isLoggedIn = false;
+			LoggedIn = false;
 			CurrentPage = Page.Login;
 		}
 		public List<Subject> GetSubjects( )
 		{
+			if( !isLoggedIn( ) )
+				return new List<Subject>( );
+
 			goTo( Page.Assessments );
 			List<Subject> Subjects = new List<Subject>( );
-			for( int i = 2 ; ; i++ )
+			for( byte i = 2 ; ; i++ )
 			{
-				Subject Sub = new Subject( );
+				Subject subject = new Subject( );
 
 				//Subject Name
 				IWebElement SubjectName;
@@ -210,50 +241,63 @@ namespace SAD
 				}
 				catch( NoSuchElementException e )
 				{
-					Console.WriteLine( "Name: " + e.Message );
-					Lgr.log( Logger.LogLevel.DEBUG, "Getting subjects finished" );
+					Lgr.log( Logger.LogLevel.DEBUG, "Name: " + e.Message );
 					break;
 				}
 				if( SubjectName.Text == "" )
 					break;
 
-				Sub.Name = SubjectName.Text.Remove( SubjectName.Text.IndexOf( " (zajęcia obowiązkowe)" ), 22 );
+				subject.Name = SubjectName.Text.Remove( SubjectName.Text.IndexOf( " (zajęcia obowiązkowe)" ), 22 );
 
 				//Subject Forms
-				//TODO: po kilka ocen w jednym okienku jest
 				List<String> SubjectForms = new List<String>( );
-				for( int j = 1 ; ; i++ )
+				bool NoException = true;
+				IWebElement FirstForm = null;
+				try
 				{
-					IWebElement SubjectForm;
+					FirstForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[1]/tbody/tr/td" ) );
+				}
+				catch( NoSuchElementException e )
+				{
 					try
 					{
-						SubjectForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[" + j + "]/tbody/tr/td" ) );
+						FirstForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[1]/tbody/tr/td[1]" ) );
 					}
-					catch( Exception e )
+					catch( Exception e2 )
 					{
+						Lgr.log( Logger.LogLevel.DEBUG, "FirstForm: " + e2.Message );
+						NoException = false;
+					}
+				}
+				if( NoException == true )
+				{
+					SubjectForms.Add( FirstForm.Text );
+					String ID = FirstForm.GetAttribute( "id" ).Remove( 0, FirstForm.GetAttribute( "id" ).LastIndexOf( "t" ) + 1 );
+					String PreId = FirstForm.GetAttribute( "id" ).Remove( FirstForm.GetAttribute( "id" ).LastIndexOf( ID ), ID.Length );
+					for( int j = Int32.Parse( ID ) + 1 ; ; j++ )
+					{
+						IWebElement SubjectForm;
 						try
 						{
-							SubjectForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[" + j + "]/tbody/tr/td[1]" ) );
+							SubjectForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[*]/tbody/tr/td[@id='" + PreId + j + "']" ) );
 						}
-						catch( Exception e2 )
+						catch( NoSuchElementException e )
 						{
-							Console.WriteLine( "Forms: " + e2.Message );
+							Lgr.log( Logger.LogLevel.DEBUG, "Forms: " + e.Message );
+							break;
 						}
-						break;
+						SubjectForms.Add( SubjectForm.Text );
 					}
-					SubjectForms.Add( SubjectForm.Text );
 				}
-				Sub.Forms = SubjectForms;
+				subject.Forms = SubjectForms;
 
 				//Subject Points
-				IWebElement SubjectPoints;
+				IWebElement SubjectPoints = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[3]" ) );
+				subject.Points = SubjectPoints.Text;
 
-				SubjectPoints = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[3]" ) );
-
-				Sub.Points = SubjectPoints.Text;
-
-				Subjects.Add( Sub );
+				Subjects.Add( subject );
 			}
+			Lgr.log( Logger.LogLevel.DEBUG, "Getting subjects finished" );
 			return Subjects;
 		}
 

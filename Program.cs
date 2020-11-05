@@ -17,7 +17,18 @@ namespace SAD
 			Logger.setLogLevel( Logger.LogLevel.DEBUG );
 
 			SADApi sad = new SADApi( );
+
+			/*String Login, Psswd;
+
+			Console.WriteLine( "Podaj login: " );
+			Login = Console.ReadLine( );
+			Console.WriteLine( "Podaj hasło: " );
+			Psswd = Console.ReadLine( );
+
+			sad.login( Login, Psswd );*/
+
 			sad.login( "abuchowski", "Airbusa380a" );
+
 			List<SADApi.Subject> subjects = sad.GetSubjects( );
 
 			foreach( SADApi.Subject Sub in subjects )
@@ -26,7 +37,7 @@ namespace SAD
 				output = Sub.Name + " ";
 				foreach( String s in Sub.Forms )
 				{
-					output += s + " ";
+					output += "[" + s + "] ";
 				}
 				output += Sub.Points;
 
