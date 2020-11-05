@@ -18,16 +18,15 @@ namespace SAD
 
 			SADApi sad = new SADApi( );
 
-			/*String Login, Psswd;
+			String Login, Psswd;
 
 			Console.WriteLine( "Podaj login: " );
 			Login = Console.ReadLine( );
 			Console.WriteLine( "Podaj hasło: " );
 			Psswd = Console.ReadLine( );
 
-			sad.login( Login, Psswd );*/
+			sad.login( Login, Psswd );
 
-			sad.login( "abuchowski", "Airbusa380a" );
 
 			List<SADApi.Subject> subjects = sad.GetSubjects( );
 
