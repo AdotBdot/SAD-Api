@@ -144,14 +144,14 @@ namespace SAD
 			waitForPageLoad( InitUrl );
 			Lgr.log( Logger.LogLevel.DEBUG, "Moved to Main page" );
 		}
-		private void goTo( Page page )
+		private int goTo( Page page )
 		{
 			if( !isLoggedIn( ) )
-				return;
+				return -1;
 
 			String InitUrl = Driver.Url;
 			if( page == CurrentPage )
-				return;
+				return 0;
 
 			goToMainPage( );
 
@@ -233,6 +233,7 @@ namespace SAD
 			}
 			waitForPageLoad( InitUrl );
 			Lgr.log( Logger.LogLevel.DEBUG, "Moved to: " + CurrentPage.ToString( ) );
+			return 1;
 		}
 		public void login( String Login, String Password )
 		{
