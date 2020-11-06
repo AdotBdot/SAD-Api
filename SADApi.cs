@@ -279,9 +279,9 @@ namespace SAD
 			if( !isLoggedIn( ) )
 				return new List<SubjectForms>( );
 
-			Lgr.log( Logger.LogLevel.DEBUG, "Getting Forms..." );
-
 			goTo( Page.Assessments );
+
+			Lgr.log( Logger.LogLevel.DEBUG, "Getting Forms..." );
 
 			List<SubjectForms> Subjects = new List<SubjectForms>( );
 
@@ -361,13 +361,13 @@ namespace SAD
 			if( !isLoggedIn( ) )
 				return new List<List<SubjectSchedule>>( );
 
-			Lgr.log( Logger.LogLevel.DEBUG, "Getting Getting Shedule..." );
-
 			goTo( Page.Schedule );
+
+
+			Lgr.log( Logger.LogLevel.DEBUG, "Getting Getting Shedule..." );
 
 			List<List<SubjectSchedule>> Schedule = new List<List<SubjectSchedule>>( );
 
-			//sa-i-j
 			for( int i = 0 ; i < 5 ; i++ )
 			{
 				List<SubjectSchedule> Day = new List<SubjectSchedule>( );
@@ -427,9 +427,9 @@ namespace SAD
 			if( !isLoggedIn( ) )
 				return new RegisteredAddress( );
 
-			Lgr.log( Logger.LogLevel.DEBUG, "Getting RegisteredAddress..." );
-
 			goTo( Page.Personal );
+
+			Lgr.log( Logger.LogLevel.DEBUG, "Getting RegisteredAddress..." );
 
 			RegisteredAddress registeredAddress = new RegisteredAddress( );
 
@@ -451,9 +451,9 @@ namespace SAD
 			if( !isLoggedIn( ) )
 				return new ContactAddress( );
 
-			Lgr.log( Logger.LogLevel.DEBUG, "Getting ContactAddress..." );
-
 			goTo( Page.Personal );
+
+			Lgr.log( Logger.LogLevel.DEBUG, "Getting ContactAddress..." );
 
 			ContactAddress contactAddress = new ContactAddress( );
 
@@ -475,9 +475,9 @@ namespace SAD
 			if( !isLoggedIn( ) )
 				return new PersonalData( );
 
-			Lgr.log( Logger.LogLevel.DEBUG, "Getting PersonalData..." );
-
 			goTo( Page.Personal );
+
+			Lgr.log( Logger.LogLevel.DEBUG, "Getting PersonalData..." );
 
 			PersonalData personalData = new PersonalData( );
 
