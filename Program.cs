@@ -9,7 +9,7 @@ namespace SAD
 {
 	class Program
 	{
-		static void Main( string[ ] args )
+		static void Main( string[] args )
 		{
 			Logger.init( );
 			Logger.LogToFile( false );
@@ -27,14 +27,14 @@ namespace SAD
 
 			sad.login( Login, Psswd );
 
-		/*	List<List<SADApi.SubjectSchedule>> subjects = sad.GetSchedule();
-			for( int i = 0 ; i < subjects.Count ; i++ )
-			{
-				for( int j = 0 ; j < subjects[ i ].Count ; j++ )
+			/*	List<List<SADApi.SubjectSchedule>> subjects = sad.GetSchedule();
+				for( int i = 0 ; i < subjects.Count ; i++ )
 				{
-					Console.WriteLine( subjects[ i ][ j ].Name + " " + subjects[ i ][ j ].Course + " " + subjects[ i ][ j ].Classroom );
-				}
-			}*/
+					for( int j = 0 ; j < subjects[ i ].Count ; j++ )
+					{
+						Console.WriteLine( subjects[ i ][ j ].Name + " " + subjects[ i ][ j ].Course + " " + subjects[ i ][ j ].Classroom );
+					}
+				}*/
 
 			Console.WriteLine( "" );
 

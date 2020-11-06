@@ -39,6 +39,45 @@ namespace SAD
 			public String Course;
 			public String Classroom;
 		}
+		public struct RegisteredAddress
+		{
+			public String Country;
+			public String Province;
+			public String District;
+			public String Town;
+			public String Commune;
+			public String Street;
+			public String HouseNum;
+			public String FlatNum;
+			public String PostCode;
+		}
+		public struct ContactAddress
+		{
+			public String Country;
+			public String Province;
+			public String District;
+			public String Town;
+			public String Commune;
+			public String Street;
+			public String HouseNum;
+			public String FlatNum;
+			public String PostCode;
+		}
+		public struct PersonalData
+		{
+			public String Name;
+			public String OtherNames;
+			public String Surname;
+			public String FamilyName;
+			public String Nick;
+			public String EMail;
+			public String Sex;
+
+			public String DateofBirth;
+			public String Country;
+			public String Province;
+			public String Town;
+		}
 
 		private Logger Lgr;
 		private IWebDriver Driver;
@@ -46,7 +85,7 @@ namespace SAD
 		private bool LoggedIn = false;
 		private Page CurrentPage;
 
-		public SADApi( )
+		public SADApi()
 		{
 			Lgr = new Logger( "SADAPI" );
 
@@ -77,11 +116,11 @@ namespace SAD
 				System.Threading.Thread.Sleep( 200 );
 			}
 		}
-		private void refresh( )
+		private void refresh()
 		{
 			Driver.Navigate( ).Refresh( );
 		}
-		private bool isLoggedIn( )
+		private bool isLoggedIn()
 		{
 			if( LoggedIn == false )
 			{
@@ -91,7 +130,7 @@ namespace SAD
 			else
 				return true;
 		}
-		private void goToMainPage( )
+		private void goToMainPage()
 		{
 			if( !isLoggedIn( ) )
 				return;
@@ -215,7 +254,7 @@ namespace SAD
 			LoggedIn = true;
 			CurrentPage = Page.Main;
 		}
-		public void logout( )
+		public void logout()
 		{
 			if( !isLoggedIn( ) )
 				return;
@@ -228,13 +267,15 @@ namespace SAD
 			LoggedIn = false;
 			CurrentPage = Page.Login;
 		}
-		public List<SubjectForms> GetSubjectsForms( )
+		public List<SubjectForms> GetSubjectsForms()
 		{
 			if( !isLoggedIn( ) )
 				return new List<SubjectForms>( );
 
 			goTo( Page.Assessments );
+
 			List<SubjectForms> Subjects = new List<SubjectForms>( );
+
 			for( byte i = 2 ; ; i++ )
 			{
 				SubjectForms subject = new SubjectForms( );
@@ -306,7 +347,7 @@ namespace SAD
 			Lgr.log( Logger.LogLevel.DEBUG, "Getting subjects finished" );
 			return Subjects;
 		}
-		public List<List<SubjectSchedule>> GetSchedule( )
+		public List<List<SubjectSchedule>> GetSchedule()
 		{
 			if( !isLoggedIn( ) )
 				return new List<List<SubjectSchedule>>( );
@@ -369,6 +410,34 @@ namespace SAD
 
 			return Schedule;
 		}
+		public RegisteredAddress GetRegisteredAddress()
+		{
+			if( !isLoggedIn( ) )
+				return new RegisteredAddress( );
 
+			goTo( Page.Personal );
+
+			RegisteredAddress registeredAddress = new RegisteredAddress( );
+			return registeredAddress;
+		}
+		public ContactAddress GetContactAddress()
+		{
+			if( !isLoggedIn( ) )
+				return new ContactAddress( );
+
+			goTo( Page.Personal );
+
+			ContactAddress contactAddress = new ContactAddress( );
+			return contactAddress;
+		}
+		public PersonalData GetPersonalData()
+		{
+			if( !isLoggedIn( ) )
+				return new PersonalData( );
+			goTo( Page.Personal );
+
+			PersonalData personalData = new PersonalData( );
+			return personalData;
+		}
 	}
 }
