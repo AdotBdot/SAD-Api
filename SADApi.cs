@@ -236,6 +236,12 @@ namespace SAD
 		}
 		public void login( String Login, String Password )
 		{
+			if( LoggedIn )
+			{
+				Lgr.log( Logger.LogLevel.INFO, "You are already logged In!" );
+				return;
+			}
+
 			String InitUrl = Driver.Url;
 
 			IWebElement LoginInput = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[3]/td/table[2]/tbody/tr[1]/td[2]/div/input" ) );
@@ -271,6 +277,8 @@ namespace SAD
 		{
 			if( !isLoggedIn( ) )
 				return new List<SubjectForms>( );
+
+			Lgr.log( Logger.LogLevel.DEBUG, "Getting Forms..." );
 
 			goTo( Page.Assessments );
 
@@ -352,6 +360,8 @@ namespace SAD
 			if( !isLoggedIn( ) )
 				return new List<List<SubjectSchedule>>( );
 
+			Lgr.log( Logger.LogLevel.DEBUG, "Getting Getting Shedule..." );
+
 			goTo( Page.Schedule );
 
 			List<List<SubjectSchedule>> Schedule = new List<List<SubjectSchedule>>( );
@@ -410,33 +420,79 @@ namespace SAD
 
 			return Schedule;
 		}
+		//TODO: Add exceptions
 		public RegisteredAddress GetRegisteredAddress()
 		{
 			if( !isLoggedIn( ) )
 				return new RegisteredAddress( );
 
+			Lgr.log( Logger.LogLevel.DEBUG, "Getting RegisteredAddress..." );
+
 			goTo( Page.Personal );
 
 			RegisteredAddress registeredAddress = new RegisteredAddress( );
+
+			registeredAddress.Country = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[2]/table/tbody/tr[1]/td[2]/div/div/div" ) ).Text;
+			registeredAddress.Province = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[2]/table/tbody/tr[2]/td[2]/div/div/div" ) ).Text;
+			registeredAddress.District = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[2]/table/tbody/tr[3]/td[2]/div/div/div" ) ).Text;
+			registeredAddress.Commune = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[2]/table/tbody/tr[4]/td[2]/div/div/div" ) ).Text;
+			registeredAddress.Town = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[2]/table/tbody/tr[5]/td[2]/div/div/div" ) ).Text;
+			registeredAddress.Street = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[2]/table/tbody/tr[6]/td[2]/div/div/div" ) ).Text;
+			registeredAddress.HouseNum = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[2]/table/tbody/tr[7]/td[2]/div/div/div" ) ).Text;
+			registeredAddress.FlatNum = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[2]/table/tbody/tr[8]/td[2]/div/div/div" ) ).Text;
+			registeredAddress.PostCode = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[2]/table/tbody/tr[9]/td[2]/div/div/div" ) ).Text;
+
 			return registeredAddress;
 		}
+		//TODO: Add exceptions
 		public ContactAddress GetContactAddress()
 		{
 			if( !isLoggedIn( ) )
 				return new ContactAddress( );
 
+			Lgr.log( Logger.LogLevel.DEBUG, "Getting ContactAddress..." );
+
 			goTo( Page.Personal );
 
 			ContactAddress contactAddress = new ContactAddress( );
+
+			contactAddress.Country = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[1]/table/tbody/tr[1]/td[2]/div/div/div" ) ).Text;
+			contactAddress.Province = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[1]/table/tbody/tr[2]/td[2]/div/div/div" ) ).Text;
+			contactAddress.District = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[1]/table/tbody/tr[3]/td[2]/div/div/div" ) ).Text;
+			contactAddress.Commune = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[1]/table/tbody/tr[4]/td[2]/div/div/div" ) ).Text;
+			contactAddress.Town = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[1]/table/tbody/tr[5]/td[2]/div/div/div" ) ).Text;
+			contactAddress.Street = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[1]/table/tbody/tr[6]/td[2]/div/div/div" ) ).Text;
+			contactAddress.HouseNum = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[1]/table/tbody/tr[7]/td[2]/div/div/div" ) ).Text;
+			contactAddress.FlatNum = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[1]/table/tbody/tr[8]/td[2]/div/div/div" ) ).Text;
+			contactAddress.PostCode = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td[1]/table/tbody/tr[9]/td[2]/div/div/div" ) ).Text;
+
 			return contactAddress;
 		}
+		//TODO: Add exceptions
 		public PersonalData GetPersonalData()
 		{
 			if( !isLoggedIn( ) )
 				return new PersonalData( );
+
+			Lgr.log( Logger.LogLevel.DEBUG, "Getting PersonalData..." );
+
 			goTo( Page.Personal );
 
 			PersonalData personalData = new PersonalData( );
+
+			personalData.Name = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[2]/td[1]/table/tbody/tr[1]/td[2]/div/div/div" ) ).Text;
+			personalData.OtherNames = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[2]/td[1]/table/tbody/tr[2]/td[2]/div/div/div" ) ).Text;
+			personalData.Surname = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[2]/td[1]/table/tbody/tr[3]/td[2]/div/div/div" ) ).Text;
+			personalData.FamilyName = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[2]/td[1]/table/tbody/tr[4]/td[2]/div/div/div" ) ).Text;
+			personalData.Nick = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[2]/td[1]/table/tbody/tr[5]/td[2]/div/div/div" ) ).Text;
+			personalData.EMail = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[2]/td[1]/table/tbody/tr[6]/td[2]/div/div/div" ) ).Text;
+			personalData.Sex = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[2]/td[1]/table/tbody/tr[7]/td[2]/div/div/div" ) ).Text;
+
+			personalData.DateofBirth = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[2]/td[2]/table/tbody/tr[1]/td[2]/div/div/div" ) ).Text;
+			personalData.Country = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[2]/td[2]/table/tbody/tr[2]/td[2]/div/div/div" ) ).Text;
+			personalData.Province = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[2]/td[2]/table/tbody/tr[3]/td[2]/div/div/div" ) ).Text;
+			personalData.Town = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[2]/td[2]/table/tbody/tr[4]/td[2]/div/div/div" ) ).Text;
+
 			return personalData;
 		}
 	}

@@ -36,9 +36,13 @@ namespace SAD
 					}
 				}*/
 
+			SADApi.PersonalData PD = sad.GetPersonalData( );
+			SADApi.RegisteredAddress RA = sad.GetRegisteredAddress( );
+			SADApi.ContactAddress CA = sad.GetContactAddress( );
+
 			Console.WriteLine( "" );
 
-			List<SADApi.SubjectForms> subjects2 = sad.GetSubjectsForms( );
+			/*List<SADApi.SubjectForms> subjects2 = sad.GetSubjectsForms( );
 
 			foreach( SADApi.SubjectForms Sub in subjects2 )
 			{
@@ -51,7 +55,7 @@ namespace SAD
 				output += Sub.Points;
 
 				Console.WriteLine( output );
-			}
+			}*/
 
 			Console.ReadKey( );
 		}
