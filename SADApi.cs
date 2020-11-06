@@ -27,11 +27,17 @@ namespace SAD
 			Personal
 		}
 
-		public struct Subject
+		public struct SubjectForms
 		{
 			public String Name;
 			public List<String> Forms;
 			public String Points;
+		}
+		public struct SubjectSchedule
+		{
+			public String Name;
+			public String Course;
+			public String Classroom;
 		}
 
 		private Logger Lgr;
@@ -222,46 +228,46 @@ namespace SAD
 			LoggedIn = false;
 			CurrentPage = Page.Login;
 		}
-		public List<Subject> GetSubjects( )
+		public List<SubjectForms> GetSubjectsForms( )
 		{
 			if( !isLoggedIn( ) )
-				return new List<Subject>( );
+				return new List<SubjectForms>( );
 
 			goTo( Page.Assessments );
-			List<Subject> Subjects = new List<Subject>( );
+			List<SubjectForms> Subjects = new List<SubjectForms>( );
 			for( byte i = 2 ; ; i++ )
 			{
-				Subject subject = new Subject( );
+				SubjectForms subject = new SubjectForms( );
 
 				//Subject Name
-				IWebElement SubjectName;
+				IWebElement ESubjectName = null;
 				try
 				{
-					SubjectName = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[1]" ) );
+					ESubjectName = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[1]" ) );
 				}
 				catch( NoSuchElementException e )
 				{
 					Lgr.log( Logger.LogLevel.DEBUG, "Name: " + e.Message );
 					break;
 				}
-				if( SubjectName.Text == "" )
+				if( ESubjectName.Text == "" )
 					break;
 
-				subject.Name = SubjectName.Text.Remove( SubjectName.Text.IndexOf( " (zajęcia obowiązkowe)" ), 22 );
+				subject.Name = ESubjectName.Text.Remove( ESubjectName.Text.IndexOf( " (zajęcia obowiązkowe)" ), 22 );
 
 				//Subject Forms
 				List<String> SubjectForms = new List<String>( );
 				bool NoException = true;
-				IWebElement FirstForm = null;
+				IWebElement EFirstForm = null;
 				try
 				{
-					FirstForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[1]/tbody/tr/td" ) );
+					EFirstForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[1]/tbody/tr/td" ) );
 				}
-				catch( NoSuchElementException e )
+				catch( NoSuchElementException )
 				{
 					try
 					{
-						FirstForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[1]/tbody/tr/td[1]" ) );
+						EFirstForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[1]/tbody/tr/td[1]" ) );
 					}
 					catch( Exception e2 )
 					{
@@ -271,22 +277,22 @@ namespace SAD
 				}
 				if( NoException == true )
 				{
-					SubjectForms.Add( FirstForm.Text );
-					String ID = FirstForm.GetAttribute( "id" ).Remove( 0, FirstForm.GetAttribute( "id" ).LastIndexOf( "t" ) + 1 );
-					String PreId = FirstForm.GetAttribute( "id" ).Remove( FirstForm.GetAttribute( "id" ).LastIndexOf( ID ), ID.Length );
+					SubjectForms.Add( EFirstForm.Text );
+					String ID = EFirstForm.GetAttribute( "id" ).Remove( 0, EFirstForm.GetAttribute( "id" ).LastIndexOf( "t" ) + 1 );
+					String PreId = EFirstForm.GetAttribute( "id" ).Remove( EFirstForm.GetAttribute( "id" ).LastIndexOf( ID ), ID.Length );
 					for( int j = Int32.Parse( ID ) + 1 ; ; j++ )
 					{
-						IWebElement SubjectForm;
+						IWebElement ESubjectForm = null;
 						try
 						{
-							SubjectForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[*]/tbody/tr/td[@id='" + PreId + j + "']" ) );
+							ESubjectForm = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[3]/td/div/div/div[1]/table/tbody/tr[" + i + "]/td[2]/table[*]/tbody/tr/td[@id='" + PreId + j + "']" ) );
 						}
 						catch( NoSuchElementException e )
 						{
 							Lgr.log( Logger.LogLevel.DEBUG, "Forms: " + e.Message );
 							break;
 						}
-						SubjectForms.Add( SubjectForm.Text );
+						SubjectForms.Add( ESubjectForm.Text );
 					}
 				}
 				subject.Forms = SubjectForms;
@@ -299,6 +305,69 @@ namespace SAD
 			}
 			Lgr.log( Logger.LogLevel.DEBUG, "Getting subjects finished" );
 			return Subjects;
+		}
+		public List<List<SubjectSchedule>> GetSchedule( )
+		{
+			if( !isLoggedIn( ) )
+				return new List<List<SubjectSchedule>>( );
+
+			goTo( Page.Schedule );
+
+			List<List<SubjectSchedule>> Schedule = new List<List<SubjectSchedule>>( );
+
+			//sa-i-j
+			for( int i = 0 ; i < 5 ; i++ )
+			{
+				List<SubjectSchedule> Day = new List<SubjectSchedule>( );
+				for( int j = 0 ; ; j++ )
+				{
+					IWebElement ESubject = null;
+					try
+					{
+						ESubject = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td/div/div/table/tbody/tr/td[2]/div/table/tbody/tr[*]/td[@id='sa-" + j + "-" + i + "']/table/tbody/tr/td/div/table/tbody" ) );
+					}
+					catch( NoSuchElementException )
+					{
+						try
+						{
+							ESubject = Driver.FindElement( By.XPath( "/html/body/table/tbody/tr[1]/td/table/tbody/tr[3]/td/div[2]/table/tbody/tr[4]/td/div/div/table/tbody/tr/td[2]/div/table/tbody/tr[*]/td[@id='sa-" + j + "-" + i + "']/table/tbody/tr/td[1]/div/table/tbody" ) );
+						}
+						catch( Exception e )
+						{
+							Lgr.log( Logger.LogLevel.DEBUG, "Shedule: " + e.Message );
+							break;
+						}
+					}
+
+					SubjectSchedule Subject;
+
+					//getting Name, Course, and Classroom
+
+					String Name = ESubject.FindElement( By.XPath( "./tr[1]/td" ) ).Text;
+					if( Name.IndexOf( "(" ) > 0 )
+						Name = Name.Remove( Name.IndexOf( "(" ), Name.Length - Name.IndexOf( "(" ) );
+					if( Name.IndexOf( "." ) > 0 )
+						Name = Name.Remove( Name.IndexOf( "." ), Name.Length - Name.IndexOf( "." ) );
+
+					String Course = ESubject.FindElement( By.XPath( "./tr[2]/td" ) ).Text;
+
+					String Classroom = ESubject.FindElement( By.XPath( "./tr[3]/td" ) ).Text;
+					if( Classroom.IndexOf( "(" ) > 0 )
+						Classroom = Classroom.Remove( Classroom.IndexOf( "(" ), Classroom.Length - Classroom.IndexOf( "(" ) );
+					if( Classroom.LastIndexOf( "." ) > 0 )
+						Classroom = Classroom.Remove( Classroom.LastIndexOf( "." ) - 2, Classroom.Length - Classroom.LastIndexOf( "." ) + 2 );
+
+					Subject.Name = Name;
+					Subject.Course = Course;
+					Subject.Classroom = Classroom;
+
+					Day.Add( Subject );
+
+				}
+				Schedule.Add( Day );
+			}
+
+			return Schedule;
 		}
 
 	}

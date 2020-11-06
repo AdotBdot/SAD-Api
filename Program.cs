@@ -27,10 +27,20 @@ namespace SAD
 
 			sad.login( Login, Psswd );
 
+		/*	List<List<SADApi.SubjectSchedule>> subjects = sad.GetSchedule();
+			for( int i = 0 ; i < subjects.Count ; i++ )
+			{
+				for( int j = 0 ; j < subjects[ i ].Count ; j++ )
+				{
+					Console.WriteLine( subjects[ i ][ j ].Name + " " + subjects[ i ][ j ].Course + " " + subjects[ i ][ j ].Classroom );
+				}
+			}*/
 
-			List<SADApi.Subject> subjects = sad.GetSubjects( );
+			Console.WriteLine( "" );
 
-			foreach( SADApi.Subject Sub in subjects )
+			List<SADApi.SubjectForms> subjects2 = sad.GetSubjectsForms( );
+
+			foreach( SADApi.SubjectForms Sub in subjects2 )
 			{
 				String output;
 				output = Sub.Name + " ";
